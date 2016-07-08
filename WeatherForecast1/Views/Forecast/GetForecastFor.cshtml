@@ -1,0 +1,55 @@
+﻿@model WeatherForecast1.Models.Forecast
+@{
+    ViewBag.Title = "GetForecastFor";
+}
+
+<h2>Forecast for @Model.city.name, @Model.city.country </h2>
+
+
+<div class="row">
+    <ul class="nav nav-tabs">
+        <li>@Html.ActionLink("Today", "GetForecastFor", new { city = @Model.city.name, days = 1 })</li>
+        <li>@Html.ActionLink("3 Days", "GetForecastFor", new { city = @Model.city.name, days = 3 })</li>
+        <li>@Html.ActionLink("7 Days", "GetForecastFor", new { city = @Model.city.name, days = 7 })</li>
+    </ul>
+
+</div>
+
+<br />
+
+<div class="row">
+
+    @foreach (var ws in Model.list)
+    {
+        <div class="col-md-3">
+
+            <center><img src="@string.Format("http://openweathermap.org/img/w/{0}.png",@ws.weather.First().icon)" alt="" /></center>
+
+            <p align="center"><b>@ws.Date.ToString("dddd, MMMM d, yyyy")</b></p>
+
+            <table class="table">
+                <tr>
+                    <td>Temp</td>
+                    <td>@ws.temp.day.ToString("N0")&#8451;</td>
+                </tr>
+                <tr>
+                    <td>Min temp</td>
+                    <td>@ws.temp.min.ToString("N0")&#8451;</td>
+                </tr>
+                <tr>
+                    <td>Max temp</td>
+                    <td>@ws.temp.max.ToString("N0")&#8451;</td>
+                </tr>
+                <tr>
+                    <td>Presure</td>
+                    <td>@ws.pressure.ToString("N0") hpa</td>
+                </tr>
+            </table>
+
+        </div>
+    }
+
+</div>
+
+
+
