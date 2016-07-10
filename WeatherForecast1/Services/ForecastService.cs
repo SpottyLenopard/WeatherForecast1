@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web;
+using WeatherForecast1.Interfaces;
 using WeatherForecast1.Models;
 
 namespace WeatherForecast1.Services
 {
-    public class ForecastService
+    public class OpenWeatherMapForecastService : IForecastService
     {
-        public ForecastService()
+        public OpenWeatherMapForecastService()
         { }
 
         public Forecast GetForecast()

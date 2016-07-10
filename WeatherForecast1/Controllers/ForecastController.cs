@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using WeatherForecast1.Interfaces;
 using WeatherForecast1.Models;
 using WeatherForecast1.Services;
 
@@ -10,9 +11,9 @@ namespace WeatherForecast1.Controllers
 {
     public class ForecastController : Controller
     {
-        private ForecastService _fs;
+        private IForecastService _fs;
 
-        public ForecastController(ForecastService forecastService)
+        public ForecastController(IForecastService forecastService)
         {
             _fs = forecastService;
         }
