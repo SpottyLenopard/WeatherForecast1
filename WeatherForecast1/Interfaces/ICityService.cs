@@ -7,11 +7,14 @@ using WeatherForecast1.Models;
 
 namespace WeatherForecast1.Interfaces
 {
-    public interface IForecastService
+    public interface ICityService
     {
-        Forecast GetForecast();
-        Forecast GetForecast(string city);
+        List<City> GetCities();
 
-        void SaveForecastRequest(Forecast forecast);
+        void AddCity(string cityName);
+
+        void DeleteCity(string cityName);
+
+        City GetCityByName(string name);
     }
 }

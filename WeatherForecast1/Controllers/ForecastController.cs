@@ -4,8 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using WeatherForecast1.Interfaces;
-using WeatherForecast1.Models;
-using WeatherForecast1.Services;
+
 
 namespace WeatherForecast1.Controllers
 {
@@ -29,6 +28,7 @@ namespace WeatherForecast1.Controllers
             var fc = _fs.GetForecast(city);
             if (fc != null)
             {
+                _fs.SaveForecastRequest(fc);
                 fc.list = fc.list.GetRange(0, days);
                 return View(fc);
             }

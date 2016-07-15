@@ -1,0 +1,26 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>City stats</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <h3>@Html.ActionLink("General stats", "GetStats")</h3>
+    </div>
+
+    <div class="col-md-6">
+        <h3>@Html.ActionLink("Stats by city", "GetStats")</h3>
+        @using (Html.BeginForm("GetStats", "Statistics", FormMethod.Post, new { @class = "form-inline" }))
+        {
+            <div class="form-group">
+                @Html.TextBox("city", null, new { @class = "form-control" })
+            </div>
+            <button type="submit" class="btn btn-default">Find</button>
+
+        }
+    </div>
+
+</div>
+

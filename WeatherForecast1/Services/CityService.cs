@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using WeatherForecast1.Classes;
+using WeatherForecast1.Interfaces;
 using WeatherForecast1.Models;
 
 namespace WeatherForecast1.Services
 {
-    public class CityService
+    public class CityService : ICityService
     {
         private static List<City> cities;
 
@@ -27,6 +28,21 @@ namespace WeatherForecast1.Services
         public List<City> GetCities()
         {
             return cities;
+        }
+
+        public void AddCity(string cityName)
+        {
+            return;
+        }
+
+        public void DeleteCity(string cityName)
+        {
+            return;
+        }
+
+        public City GetCityByName(string name)
+        {
+            return null;
         }
     }
 }

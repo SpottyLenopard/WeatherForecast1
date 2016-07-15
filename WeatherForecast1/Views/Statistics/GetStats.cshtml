@@ -1,0 +1,43 @@
+﻿@model List<WeatherForecast1.Models.CityStatistic>
+@{
+    ViewBag.Title = "GetStats";
+}
+
+<h2>General Statistics</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <table class="table-bordered">
+            <tr>
+                <th>City</th>
+                <th>Request Time</th>
+            </tr>
+            @foreach (var stats in Model)
+            {
+                <tr>
+                    <td>@stats.City.name</td>
+                    <td>@stats.RequestTime.ToString("dd/MM/yyyy hh:mm:ss")</td>
+                </tr>
+            }
+        </table>
+
+        <div>
+            @Html.ActionLink("Back", "Index")
+        </div>
+    </div>
+    <div class="col-md-6">
+        <table class="table-bordered">
+            <tr>
+                <th>City requests for today</th>
+                <th>Count</th>
+            </tr>
+            @foreach (var city in Model.Where(_ => _.RequestTime.Date == DateTime.Now.Date).GroupBy(item => item.City.id))
+            {
+                <tr>
+                    <td>@city.FirstOrDefault().City.name</td>
+                    <td>@city.Count()</td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>

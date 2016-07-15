@@ -31,6 +31,8 @@ namespace WeatherForecast1.Services
         private void AddBindings()
         {
             _kernel.Bind<IForecastService>().To<OpenWeatherMapForecastService>();
+            _kernel.Bind<ICityService>().To<DBCityService>();
+
         }
     }
 }
