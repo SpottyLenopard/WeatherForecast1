@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using WeatherForecast1.Services;
@@ -21,11 +22,14 @@ namespace WeatherForecast1.Controllers
             return View();
         }
 
-        public ActionResult GetStats(string city = "")
+        public async Task<ActionResult> GetStats(string city = "")
         {
-            var items =  _ss.GetStats(city);
+            var items = await _ss.GetStats(city);
             
-            return View(items);
+            if (items.Any())
+                return View(items);
+            return
+                View("EmptyStats");
         }
     }
 }

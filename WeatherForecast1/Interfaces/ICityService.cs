@@ -9,12 +9,12 @@ namespace WeatherForecast1.Interfaces
 {
     public interface ICityService
     {
-        List<City> GetCities();
+        Task<List<City>> GetCities();
 
-        void AddCity(string cityName);
+        Task AddCity(string cityName);
 
-        void DeleteCity(string cityName);
+        Task DeleteCity(string cityName);
 
-        City GetCityByName(string name);
+        Task<City> GetCityByName(string name);
     }
 }

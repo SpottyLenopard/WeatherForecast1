@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using WeatherForecast1.Classes;
 using WeatherForecast1.Context;
@@ -16,17 +18,18 @@ namespace WeatherForecast1.Services
         {
             _fs = fs;
         }
-        public List<City> GetCities()
+        public async Task<List<City>> GetCities()
         {
             using (var fc = new ForecastContext())
             {
-                if (fc.ActiveCities != null)
+                bool hasActiveCities = await fc.ActiveCities.AnyAsync();
+                if (hasActiveCities)
                 {
-                    var cities = from c in fc.Cities
+                    var cities = await(from c in fc.Cities
                                  join ac in fc.ActiveCities on c.id equals ac.CityId
-                                 select c;
+                                 select c).ToListAsync();
 
-                    return cities.ToList<City>();
+                    return cities;
 
                 }
 
@@ -35,11 +38,11 @@ namespace WeatherForecast1.Services
             }
         }
 
-        public void AddCity(string cityName)
+        public async Task AddCity(string cityName)
         {
             using (var fc = new ForecastContext())
             {
-                Forecast forecast = _fs.GetForecast(cityName);
+                var forecast = await _fs.GetForecast(cityName);
                 if (forecast != null)
                 {
                     City newCity = new City
@@ -54,44 +57,68 @@ namespace WeatherForecast1.Services
                             lon = forecast.city.coord.lon,
                         },
                     };
-                    if (fc.Cities.Where(_ => _.id == newCity.id).Count() == 0)
+                    bool cityExists = await fc.Cities.AnyAsync(_ => _.id == newCity.id);
+                    if (!cityExists)
                         fc.Cities.Add(newCity);
                     ActiveCity ac = new ActiveCity
                     {
                         CityId = newCity.id,
                     };
-                    if (fc.ActiveCities.Where(_ => _.CityId == newCity.id).Count() == 0)
+                    bool activeCityExists = await fc.ActiveCities.AnyAsync(_ => _.CityId == newCity.id);
+                    if (!activeCityExists)
                         fc.ActiveCities.Add(ac);
-                    fc.SaveChanges();
+                    try
+                    {
+                        await fc.SaveChangesAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
                 }
             }
         }
 
-        public void DeleteCity(string cityName)
+        public async Task DeleteCity(string cityName)
         {
             using (var fc = new ForecastContext())
             {
-                var city = GetCityByName(cityName);
+                var city = await GetCityByName(cityName);
 
                 if (city != null)
                 {
-                    var ac = fc.ActiveCities.Where(_ => _.CityId == city.id).FirstOrDefault();
+                    var ac = await fc.ActiveCities.FirstOrDefaultAsync(_ => _.CityId == city.id);
                     if (ac != null)
                     {
                         fc.ActiveCities.Remove(ac);
-                        fc.SaveChanges();
+                        try
+                        {
+                            await fc.SaveChangesAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            throw ex;
+                        }
                     }
                 }
             }
 
         }
 
-        public City GetCityByName(string name)
+        public async Task<City> GetCityByName(string name)
         {
             using (var fc = new ForecastContext())
             {
-                var cities = fc.Cities.Where(_ => _.name == name);
-                if (cities.Count() > 0)
+                List<City> cities = null;
+                try
+                {
+                    cities = await fc.Cities.Where(_ => _.name == name).ToListAsync();
+                }
+                catch (Exception ex)
+                {                   
+                    throw ex;
+                }
+                if (cities.Any())
                     return cities.FirstOrDefault<City>();
 
                 return null;

@@ -2,8 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Configuration;
 using WeatherForecast1.Classes;
@@ -20,15 +22,15 @@ namespace WeatherForecast1.Services
 
         }
 
-        public Forecast GetForecast()
+        public Task<Forecast> GetForecast()
         {
             return GetForecast("Kiev");
         }
 
-        public Forecast GetForecast(string city)
+        public async Task<Forecast> GetForecast(string city)
         {
 
-            if (city != null && city != string.Empty)
+            if (!String.IsNullOrEmpty(city))
             {
                 try
                 {
@@ -40,13 +42,19 @@ namespace WeatherForecast1.Services
                         if (customSetting != null)
                             key = customSetting.Value;
                     }
-                    WebClient client = new WebClient();
-                    var json = client.DownloadString(string.Format("http://api.openweathermap.org/data/2.5/forecast/daily?q={0}&units=metric&APPID=ed7143c5070946e139cb0a559498dee4", city));
-                    Forecast f = new Forecast();
-                    f = JsonConvert.DeserializeObject<Forecast>(json);
-                    return f;
+                    string json = string.Empty;
+                    using (WebClient client = new WebClient())
+                    {                    
+                        json = await client.DownloadStringTaskAsync($"http://api.openweathermap.org/data/2.5/forecast/daily?q={city}&units=metric&APPID={key}");
+                    }
+                    if (json != string.Empty)
+                    {
+                        Forecast f = new Forecast();
+                        f = JsonConvert.DeserializeObject<Forecast>(json);
+                        return f;
+                    }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     return null;
                 }
@@ -54,10 +62,11 @@ namespace WeatherForecast1.Services
             return null;
         }
 
-        public void SaveForecastRequest(Forecast forecast)
+        public async Task SaveForecastRequest(Forecast forecast)
         {
             using (var fc = new ForecastContext())
             {
+
                 City newCity = new City
                 {
                     id = forecast.city.id,
@@ -70,11 +79,19 @@ namespace WeatherForecast1.Services
                         lon = forecast.city.coord.lon,
                     },
                 };
-                if (fc.Cities.Where(_ => _.id == newCity.id).Count() == 0)
+                var cityExists = await fc.Cities.AnyAsync(_ => _.id == newCity.id);
+                if (!cityExists)
                     fc.Cities.Add(newCity);
-                var cs = new CityStatistic { CityId = newCity.id, RequestTime = DateTime.Now };
+                var cs = new CityStatistic {CityId = newCity.id, RequestTime = DateTime.Now};
                 fc.CityStatistics.Add(cs);
-                fc.SaveChanges();
+                try
+                {
+                    await fc.SaveChangesAsync();
+                }
+                catch (Exception ae)
+                {
+                    throw ae;
+                }
             }
         }
     }

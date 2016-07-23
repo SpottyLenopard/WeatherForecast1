@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using WeatherForecast1.Classes;
 using WeatherForecast1.Interfaces;
@@ -25,24 +26,24 @@ namespace WeatherForecast1.Services
                 };
         }
 
-        public List<City> GetCities()
+        public Task<List<City>> GetCities()
         {
-            return cities;
+            return Task.FromResult(cities);
         }
 
-        public void AddCity(string cityName)
+        public Task AddCity(string cityName)
         {
-            return;
+            throw new NotImplementedException();
         }
 
-        public void DeleteCity(string cityName)
+        public Task DeleteCity(string cityName)
         {
-            return;
+            throw new NotImplementedException();
         }
 
-        public City GetCityByName(string name)
+        public Task<City> GetCityByName(string name)
         {
-            return null;
+            throw new NotImplementedException();
         }
     }
 }

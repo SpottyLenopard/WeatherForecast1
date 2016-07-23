@@ -259,6 +259,7 @@
     <Content Include="Views\City\Delete.cshtml" />
     <Content Include="Views\Statistics\Index.cshtml" />
     <Content Include="Views\Statistics\GetStats.cshtml" />
+    <Content Include="Views\Statistics\EmptyStats.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

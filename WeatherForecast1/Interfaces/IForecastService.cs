@@ -9,9 +9,9 @@ namespace WeatherForecast1.Interfaces
 {
     public interface IForecastService
     {
-        Forecast GetForecast();
-        Forecast GetForecast(string city);
+        Task<Forecast> GetForecast();
+        Task<Forecast> GetForecast(string city);
 
-        void SaveForecastRequest(Forecast forecast);
+        Task SaveForecastRequest(Forecast forecast);
     }
 }

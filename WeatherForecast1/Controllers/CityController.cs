@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using WeatherForecast1.Interfaces;
@@ -18,9 +19,9 @@ namespace WeatherForecast1.Controllers
             _cs = cs;
         }
         // GET: City
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            var items = _cs.GetCities();
+            var items = await _cs.GetCities();
             return View(items);
         }
 
@@ -30,22 +31,46 @@ namespace WeatherForecast1.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create(City city)
+        public async Task<ActionResult> Create(City city)
         {
             if (ModelState.IsValid)
-                _cs.AddCity(city.name);
+                try
+                {
+                    await _cs.AddCity(city.name);
+                }
+                catch (Exception ex)
+                {
+
+                    return View("Error");
+                }
+                
             return RedirectToAction("Index");
         }
 
-        public ActionResult Delete(string city)
+        public async Task<ActionResult> Delete(string city)
         {
-            return View(_cs.GetCityByName(city));
+            try
+            {
+                var cityToDelete = await _cs.GetCityByName(city);
+                return View(cityToDelete);
+            }
+            catch (Exception ex)
+            {
+                return View("Error");
+            }
         }
 
         [HttpPost, ActionName("Delete")]
-        public ActionResult DeleteConfirm(string city)
+        public async Task<ActionResult> DeleteConfirm(string city)
         {
-            _cs.DeleteCity(city);
+            try
+            {
+                await _cs.DeleteCity(city);
+            }
+            catch (Exception ex)
+            {
+                return View("Error");
+            }
             return RedirectToAction("Index");
         }
     }

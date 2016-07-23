@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using WeatherForecast1.Interfaces;
@@ -16,23 +17,24 @@ namespace WeatherForecast1.Controllers
         {
             _fs = forecastService;
         }
-        // GET: Forecast
-        public ActionResult Index()
-        {
-            var fc = _fs.GetForecast();
-            return View();
-        }
 
-        public ActionResult GetForecastFor(string city, int days = 1)
+        public async Task<ActionResult> GetForecastFor(string city, int days = 1)
         {
-            var fc = _fs.GetForecast(city);
+
+            var fc = await _fs.GetForecast(city);
             if (fc != null)
             {
-                _fs.SaveForecastRequest(fc);
+                try
+                {
+                    await _fs.SaveForecastRequest(fc);
+                }
+                catch (Exception ex)
+                {
+                    return View("Error");
+                }
                 fc.list = fc.list.GetRange(0, days);
                 return View(fc);
             }
-
             return View("Error");
 
         }
